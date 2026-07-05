@@ -7,8 +7,8 @@ from storeapi.models.post import UserPost, UserPostIn
 router = APIRouter()
 
 
-post_table = []
-comment_table = []
+post_table = {}
+comment_table = {}
 
 def find_post(post_id: int):
     return post_table.get(post_id)
@@ -26,13 +26,13 @@ async def create_post(post: UserPostIn):
     data = post.model_dump()
     last_record_id = len(post_table)
     new_post = {**data, "id": last_record_id}
-    post_table.append(new_post)
+    post_table[last_record_id] = new_post
     return new_post
 
 
 @router.get("/posts", response_model=list[UserPost], status_code=200)
 async def get_all_posts():
-    return post_table
+    return list(post_table.values())
 
 
 @router.post("/comment", response_model=Comment, status_code=201)
@@ -51,7 +51,7 @@ async def create_comment(comment: CommentIn):
 @router.get("/post/{post_id}/comment", response_model=list[Comment], status_code=200)
 async def get_comments(post_id: int):
     return [
-        comment for comment in comment_table if comment["post_id"] == post_id
+        comment for comment in comment_table.values() if comment["post_id"] == post_id
     ]
 
 
@@ -63,6 +63,6 @@ async def get_post_with_comments(post_id: int):
     return {
         "post": post,
         "comments": [
-            comment for comment in comment_table if comment["post_id"] == post_id
+            comment for comment in comment_table.values() if comment["post_id"] == post_id
         ]
     }
