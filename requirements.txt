@@ -2,3 +2,7 @@ fastapi[standard]
 uvicorn[standard]
 pytest
 httpx2
+sqlalchemy
+databases[aiosqlite]
+python-dotenv
+pydantic-settings
