@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class BaseConfig(BaseSettings):
     ENV_STATE: Optional[str] = None
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_state=ENV_STATE)
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 class GlobalConfig(BaseConfig):
@@ -14,24 +14,25 @@ class GlobalConfig(BaseConfig):
 
 
 class DevConfig(GlobalConfig):
-    model_config = SettingsConfigDict(env_prefix="DEV_")
+    model_config = SettingsConfigDict(env_prefix="DEV_", env_file=".env", extra="ignore")
 
 
 class ProdConfig(GlobalConfig):
-    model_config = SettingsConfigDict(env_prefix="PROD_")
+    model_config = SettingsConfigDict(env_prefix="PROD_", env_file=".env", extra="ignore")
 
 
 class TestConfig(GlobalConfig):
     DATABASE_URL: str = "sqlite:///test.db"
     DB_FORCE_ROLLBACK: bool = True
-    model_config = SettingsConfigDict(env_prefix="TEST_")
+    model_config = SettingsConfigDict(env_prefix="TEST_", env_file=".env", extra="ignore")
+
 
 @lru_cache()
 def get_config(env_state: str):
     configs = {
-        "dev": DevConfig(),
-        "prod": ProdConfig(),
-        "test": TestConfig(),
+        "dev": DevConfig,
+        "prod": ProdConfig,
+        "test": TestConfig,
     }
     return configs[env_state]()
 
