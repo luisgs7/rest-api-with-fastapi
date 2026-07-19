@@ -7,6 +7,7 @@ from httpx2 import ASGITransport, AsyncClient
 
 os.environ["ENV_STATE"] = "test"
 
+from storeapi.database import database
 from storeapi.main import app
 from storeapi.routes.post import comment_table, post_table
 
@@ -23,9 +24,9 @@ def client() -> Generator:
 
 @pytest.fixture(autouse=True)
 async def db() -> AsyncGenerator:
-    post_table.clear()
-    comment_table.clear()
+    await database.connect()
     yield
+    await database.disconnect()
 
 
 @pytest.fixture()

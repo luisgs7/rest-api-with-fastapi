@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from storeapi.models.post import UserPost
 
@@ -8,6 +8,7 @@ class CommentIn(BaseModel):
 
 
 class Comment(CommentIn):
+    model_config = ConfigDict(from_attributes=True)
     id: int
 
 
